@@ -1,7 +1,9 @@
 #[macro_use]
 extern crate glium;
+extern crate image;
 
 use std::option::*;
+use std::io::Cursor;
 use glium::*;
 use glium::glutin::Event;
 use glium::glutin::VirtualKeyCode;
@@ -15,20 +17,25 @@ fn main() {
         .build_glium()
         .unwrap();
 
+    let image = image::load(Cursor::new(&include_bytes!("../assets/water.png")[..]), image::PNG).unwrap().to_rgba();
+    let image_dimensions = image.dimensions();
+    let image = texture::RawImage2d::from_raw_rgba_reversed(image.into_raw(), image_dimensions);
+    let texture = glium::texture::Texture2d::new(&display, image).unwrap();
+
     let vertex_buffer = {
         #[derive(Copy, Clone)]
         struct Vertex {
             position: [f32; 2],
-            color: [f32; 3],
+            tex_coords: [f32; 2],
         }
 
-        implement_vertex!(Vertex, position, color);
+        implement_vertex!(Vertex, position, tex_coords);
 
         glium::VertexBuffer::new(&display,
             &[
-                Vertex { position: [-0.5, -0.5], color: [0.0, 1.0, 0.0] },
-                Vertex { position: [ 0.0,  0.5], color: [0.0, 0.0, 1.0] },
-                Vertex { position: [ 0.5, -0.5], color: [1.0, 0.0, 0.0] },
+                Vertex { position: [-0.5, -0.5], tex_coords: [0.0, 0.0] },
+                Vertex { position: [ 0.0,  0.5], tex_coords: [0.0, 1.0] },
+                Vertex { position: [ 0.5, -0.5], tex_coords: [1.0, 0.0] },
             ]
         ).unwrap()
     };
@@ -43,23 +50,25 @@ fn main() {
                 uniform mat4 matrix;
 
                 in vec2 position;
-                in vec3 color;
-                out vec3 vColor;
+                in vec2 tex_coords;
+                out vec2 v_tex_coords;
 
                 void main() {
-                    gl_Position = vec4(position, 0.0, 1.0) * matrix;
-                    vColor = color;
+                    v_tex_coords = tex_coords;
+                    gl_Position = matrix * vec4(position, 0.0, 1.0);
                 }
             ",
 
             fragment: "
                 #version 140
 
-                in vec3 vColor;
-                out vec4 f_color;
+                in vec2 v_tex_coords;
+                out vec4 color;
+
+                uniform sampler2D tex;
 
                 void main() {
-                    f_color = vec4(vColor, 1.0);
+                    color = texture(tex, v_tex_coords);
                 }
             "
         }
@@ -72,7 +81,8 @@ fn main() {
                 [0.0, 1.0, 0.0, 0.0],
                 [0.0, 0.0, 1.0, 0.0],
                 [0.0, 0.0, 0.0, 1.0f32]
-            ]
+            ],
+            tex: &texture,
         };
 
         let mut target = display.draw();
