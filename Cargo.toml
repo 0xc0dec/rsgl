@@ -1,0 +1,8 @@
+[package]
+name = "rsgl"
+version = "0.1.0"
+authors = ["Aleksey Fedotov <0xc0dec@gmail.com>"]
+
+[dependencies]
+glium = "*"
+image = "*"
