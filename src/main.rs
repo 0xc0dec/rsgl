@@ -1,9 +1,15 @@
+#![allow(dead_code)]
+#![allow(unused_variables)]
+
 #[macro_use]
 extern crate glium;
 extern crate image;
 
 mod teapot;
 mod shaders;
+mod vector3;
+mod angles;
+mod math;
 
 use std::option::*;
 use std::io::Cursor;
@@ -13,7 +19,18 @@ use glium::glutin::VirtualKeyCode;
 use glium::glutin::ElementState;
 use glium::index::PrimitiveType;
 
+fn test() {
+    let mut v1 = vector3::Vector3::new(1.0, 2.0, 3.0);
+    let mut v2 = vector3::Vector3::new(2.0, 3.0, 4.0);
+    let v3 = v1 + v2;
+    let v4 = v1 * 12.0;
+    v1 += v2;
+    v2 *= 3.0;
+}
+
 fn main() {
+    test();
+
     let display = glutin::WindowBuilder::new()
         .with_title("Test!")
         .with_dimensions(800, 600)
