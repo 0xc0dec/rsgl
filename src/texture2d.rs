@@ -1,5 +1,4 @@
 use device;
-
 use glium;
 use image;
 use std::io::Cursor;

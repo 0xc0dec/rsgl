@@ -11,11 +11,11 @@ mod shaders;
 mod device;
 mod texture2d;
 mod fs;
+mod material;
 
 #[cfg(test)]
 mod test;
 
-use std::option::*;
 use glium::*;
 use glium::index::PrimitiveType;
 
@@ -26,15 +26,14 @@ fn update(frame: &mut glium::Frame) {
 fn main() {
     let mut dev = device::Device::new("Test", 1366, 768);
     let tex = texture2d::Texture2d::from_bytes(fs::read_all_bytes("assets/water.png"), &dev);
+    let mat = material::Material::from_shader_src(shaders::VS_TEAPOT, shaders::FS_TEAPOT, &dev);
+    
     dev.run(&update);
 
     // let positions = glium::VertexBuffer::new(&display, &teapot::VERTICES).unwrap();
     // let normals = glium::VertexBuffer::new(&display, &teapot::NORMALS).unwrap();
     // let indices = glium::IndexBuffer::new(&display, PrimitiveType::TrianglesList, &teapot::INDICES).unwrap();
 
-    // let program = Program::from_source(&display, shaders::VS_TEAPOT, shaders::FS_TEAPOT, None).unwrap();
-
-    // dev.run();
     // loop {
     //     let matrix = [
     //         [0.01, 0.0, 0.0, 0.0],
