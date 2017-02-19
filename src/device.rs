@@ -4,11 +4,11 @@ use glium::glutin::Event;
 use glium::glutin::VirtualKeyCode;
 use glium::glutin::ElementState;
 
-pub type GliumDisplay = glium::backend::glutin_backend::GlutinFacade;
+pub type DeviceDisplay = glium::backend::glutin_backend::GlutinFacade;
 
 pub struct Device {
     running: bool,
-    display: GliumDisplay
+    display: DeviceDisplay
 }
 
 impl Device {
@@ -25,15 +25,18 @@ impl Device {
         }
     }
 
-    pub fn display(&self) -> &GliumDisplay {
+    pub fn display(&self) -> &DeviceDisplay {
         &self.display
     }
 
-    pub fn run(&mut self, update: &Fn()) {
+    pub fn run(&mut self, update: &Fn(&mut glium::Frame)) {
         while self.running {
             let events = self.display.poll_events().collect::<Vec<_>>();
             self.process_events(events);
-            update();
+
+            let mut frame = self.display.draw();
+            update(&mut frame);
+            frame.finish().unwrap();
         }
     }
 

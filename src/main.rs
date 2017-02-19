@@ -10,6 +10,7 @@ mod teapot;
 mod shaders;
 mod device;
 mod texture2d;
+mod fs;
 
 #[cfg(test)]
 mod test;
@@ -18,12 +19,13 @@ use std::option::*;
 use glium::*;
 use glium::index::PrimitiveType;
 
-fn update() {
+fn update(frame: &mut glium::Frame) {
+    frame.clear_color(0.0, 0.8, 0.8, 1.0);
 }
 
 fn main() {
-    let mut dev = device::Device::new("wrewer", 1366, 768);
-    let tex = texture2d::Texture2d::from_file("assets/water.png", &dev);
+    let mut dev = device::Device::new("Test", 1366, 768);
+    let tex = texture2d::Texture2d::from_bytes(fs::read_all_bytes("assets/water.png"), &dev);
     dev.run(&update);
 
     // let positions = glium::VertexBuffer::new(&display, &teapot::VERTICES).unwrap();

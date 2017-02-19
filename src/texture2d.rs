@@ -2,10 +2,7 @@ use device;
 
 use glium;
 use image;
-use std::io;
 use std::io::Cursor;
-use std::io::prelude::*;
-use std::fs::File;
 
 pub struct Texture2d {
     tex: glium::texture::Texture2d
@@ -21,12 +18,5 @@ impl Texture2d {
         Texture2d {
             tex: texture
         }
-    }
-
-    pub fn from_file(path: &str, dev: &device::Device) -> Self {
-        let mut file = File::open(path).unwrap();
-        let mut bytes = Vec::new();
-        file.read_to_end(&mut bytes);
-        Self::from_bytes(bytes, dev)
     }
 }
