@@ -1,9 +1,16 @@
+#![allow(unused_imports)]
+#![allow(dead_code)]
+
 #[macro_use]
 extern crate vulkano;
 extern crate vulkano_win;
 #[macro_use]
 extern crate vulkano_shader_derive;
 extern crate winit;
+extern crate glm;
+
+mod matrix;
+mod vector3;
 
 use vulkano::instance::*;
 use vulkano::device::*;
@@ -19,12 +26,7 @@ use winit::*;
 use std::sync::Arc;
 use vulkano::pipeline::viewport::Viewport;
 
-mod matrix;
-
 fn main() {
-    let m = matrix::Matrix {
-    };
-
     let instance = Instance::new(None, &vulkano_win::required_extensions(), None)
         .expect("Failed to create instance.");
 
@@ -235,15 +237,47 @@ fn main() {
             }
         }
 
-        let mut done = false;
+        let mut run = true;
 
         events_loop.poll_events(|ev| {
             match ev {
-                winit::Event::WindowEvent { event: winit::WindowEvent::CloseRequested, .. } => done = true,
+                winit::Event::WindowEvent { event: winit::WindowEvent::CloseRequested, .. } => run = false,
+                winit::Event::WindowEvent {
+                    event: winit::WindowEvent::MouseInput {
+                        button,
+                        state: winit::ElementState::Pressed,
+                        ..
+                    },
+                    ..
+                } => {
+                    println!("Button pressed: {:?}", button);
+                },
+                winit::Event::WindowEvent {
+                    event: winit::WindowEvent::KeyboardInput {
+                        input: winit::KeyboardInput {
+                            virtual_keycode,
+                            state,
+                            ..
+                        },
+                        ..
+                    },
+                    ..
+                } => {
+                    match virtual_keycode {
+                        Some(code) => {
+                            if code == winit::VirtualKeyCode::Escape {
+                                run = false;
+                            }
+
+                            println!("Key {:?} {:?}", code, state);
+                        },
+                        None => ()
+                    }
+                }
                 _ => ()
             }
         });
 
-        if done { return; }
+        if !run { return; }
     }
 }
