@@ -1,4 +1,5 @@
 #![allow(unused_imports)]
+#![allow(unused_variables)]
 #![allow(dead_code)]
 
 #[macro_use]
@@ -7,10 +8,14 @@ extern crate vulkano_win;
 #[macro_use]
 extern crate vulkano_shader_derive;
 extern crate winit;
-extern crate glm;
+extern crate nalgebra_glm as glm;
 
 mod matrix;
 mod vector3;
+mod quaternion;
+mod transform;
+mod spectator;
+mod math;
 
 use vulkano::instance::*;
 use vulkano::device::*;
@@ -22,9 +27,9 @@ use vulkano::pipeline::viewport::*;
 use vulkano::sync::*;
 use vulkano::swapchain::*;
 use vulkano_win::*;
+use vulkano::pipeline::viewport::Viewport;
 use winit::*;
 use std::sync::Arc;
-use vulkano::pipeline::viewport::Viewport;
 
 fn main() {
     let instance = Instance::new(None, &vulkano_win::required_extensions(), None)

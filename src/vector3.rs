@@ -1,32 +1,39 @@
 use glm;
-use glm::*;
 
-pub type Vector3 = glm::Vector3<f32>;
-
-pub trait Vector3Ext {
-    fn length(self) -> f32;
-    fn distance(self, other: Vector3) -> f32;
+pub trait Vec3Ext {
+    fn length(&self) -> f32;
+    fn distance(&self, other: glm::Vec3) -> f32;
+    fn angle(&self, other: glm::Vec3) -> f32;
+    fn normalized(&self) -> Self;
 }
 
-impl Vector3Ext for Vector3 {
-    fn length(self) -> f32 {
+impl Vec3Ext for glm::Vec3 {
+    fn length(&self) -> f32 {
         glm::length(self)
     }
 
-    fn distance(self, other: Self) -> f32 {
-        glm::distance(self, other)
+    fn distance(&self, other: Self) -> f32 {
+        glm::distance(self, &other)
+    }
+
+    fn angle(&self, other: glm::Vec3) -> f32 {
+        glm::angle(self, &other)
+    }
+
+    fn normalized(&self) -> Self {
+        glm::normalize(self)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use glm;
+    use super::Vec3Ext;
 
     #[test]
     fn smoke() {
-        let v1 = Vector3::new(1.0, 2.0, 3.0);
-        let v2 = Vector3::new(1.0, 2.0, 3.0);
-        let _len = v1.length();
-        let _dist = v1.distance(v2);
+        let v = glm::vec3(1., 2., 3.);
+        let l = v.length();
+        let d = v.distance(v);
     }
 }
