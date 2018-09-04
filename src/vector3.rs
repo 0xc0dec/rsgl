@@ -2,8 +2,8 @@ use glm;
 
 pub trait Vec3Ext {
     fn length(&self) -> f32;
-    fn distance(&self, other: glm::Vec3) -> f32;
-    fn angle(&self, other: glm::Vec3) -> f32;
+    fn distance(&self, other: Self) -> f32;
+    fn angle(&self, other: Self) -> f32;
     fn normalized(&self) -> Self;
 }
 
