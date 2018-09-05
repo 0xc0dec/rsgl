@@ -14,7 +14,8 @@ pub struct Transform {
     local_scale: glm::Vec3,
     dirty_flags: Cell<u32>,
     matrix: Cell<glm::Mat4>,
-    world_matrix: Cell<glm::Mat4>
+    world_matrix: Cell<glm::Mat4>,
+    parent: Weak<Transform>
 }
 
 pub enum TransformSpace {
@@ -31,8 +32,13 @@ impl Transform {
             local_scale: glm::vec3(1., 1., 1.),
             dirty_flags: Cell::new(DIRTY_FLAG_ALL),
             matrix: Cell::new(glm::identity()),
-            world_matrix: Cell::new(glm::identity())
+            world_matrix: Cell::new(glm::identity()),
+            parent: Weak::new()
         }
+    }
+
+    pub fn set_parent(&self, parent: &Self) {
+        self.parent.
     }
 
     pub fn rotate_by_axis_angle(&mut self, axis: glm::Vec3, angle: f32, space: TransformSpace) {
