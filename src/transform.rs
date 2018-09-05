@@ -38,7 +38,7 @@ impl Transform {
     }
 
     pub fn set_parent(&self, parent: &Self) {
-        self.parent.
+        unimplemented!();
     }
 
     pub fn rotate_by_axis_angle(&mut self, axis: glm::Vec3, angle: f32, space: TransformSpace) {
