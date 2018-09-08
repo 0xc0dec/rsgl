@@ -1,7 +1,7 @@
 use glm;
 use quaternion::*;
-use std::rc::Weak;
-use std::cell::Cell;
+use std::rc::{Rc, Weak};
+use std::cell::{Cell, RefCell};
 
 const DIRTY_FLAG_LOCAL: u32 = 1 << 0;
 const DIRTY_FLAG_WORLD: u32 = 1 << 1;
@@ -14,8 +14,8 @@ pub struct Transform {
     local_scale: glm::Vec3,
     dirty_flags: Cell<u32>,
     matrix: Cell<glm::Mat4>,
-    world_matrix: Cell<glm::Mat4>,
-    parent: Weak<Transform>
+    parent: RefCell<Weak<Transform>>,
+    children: RefCell<Vec<Weak<Transform>>>
 }
 
 pub enum TransformSpace {
@@ -32,12 +32,12 @@ impl Transform {
             local_scale: glm::vec3(1., 1., 1.),
             dirty_flags: Cell::new(DIRTY_FLAG_ALL),
             matrix: Cell::new(glm::identity()),
-            world_matrix: Cell::new(glm::identity()),
-            parent: Weak::new()
+            parent: RefCell::new(Weak::new()),
+            children: RefCell::new(vec![])
         }
     }
 
-    pub fn set_parent(&self, parent: &Self) {
+    pub fn set_parent(&self, parent: &Weak<Transform>) {
         unimplemented!();
     }
 
