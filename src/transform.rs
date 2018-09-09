@@ -8,6 +8,7 @@ const DIRTY_FLAG_WORLD: u32 = 1 << 1;
 const DIRTY_FLAG_INV_TRANSP_WORLD: u32 = 1 << 2;
 const DIRTY_FLAG_ALL: u32 = DIRTY_FLAG_LOCAL | DIRTY_FLAG_WORLD | DIRTY_FLAG_INV_TRANSP_WORLD;
 
+#[derive(Debug)]
 pub struct Transform {
     local_rot: glm::Quat,
     local_pos: glm::Vec3,
@@ -37,8 +38,13 @@ impl Transform {
         }
     }
 
-    pub fn set_parent(&self, parent: &Weak<Transform>) {
-        unimplemented!();
+    pub fn set_parent(&self, parent: Weak<Transform>) {
+        if let Some(current) = self.parent.borrow().upgrade() {
+            // Remove this item from its previous parent's children list
+            println!("{:?}", current);
+        }
+
+        *self.parent.borrow_mut() = parent;
     }
 
     pub fn rotate_by_axis_angle(&mut self, axis: glm::Vec3, angle: f32, space: TransformSpace) {
@@ -87,11 +93,6 @@ impl Transform {
 
     fn world_matrix(&self) -> glm::Mat4 {
         unimplemented!();
-
-//        if self.dirty_flags.get() & DIRTY_FLAG_WORLD == 0 {
-//            if true { // TODO parent
-//            }
-//        }
     }
 
     fn rotate(&mut self, rot: glm::Quat, space: TransformSpace) {
@@ -112,5 +113,17 @@ impl Transform {
 
     fn world_rotation(&self) -> glm::Quat {
         unimplemented!();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn smoke() {
+        let t1 = Rc::new(Transform::new());
+        let t2 = Rc::new(Transform::new());
+        t1.set_parent(Rc::downgrade(&t2));
     }
 }
